@@ -1,20 +1,20 @@
 #!/usr/bin/env node
-import type { CallToolRequest } from '@modelcontextprotocol/sdk/types.js';
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import type { CallToolRequest } from "@modelcontextprotocol/sdk/types.js";
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
 	CallToolRequestSchema,
 	GetPromptRequestSchema,
 	ListPromptsRequestSchema,
 	ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
-import { createConfig } from './config.js';
-import { authenticateDirectus, createDirectus } from './directus.js';
-import { getAvailablePrompts, handleGetPrompt } from './prompts/handlers.js';
-import { fetchPrompts } from './prompts/index.js';
-import { getTools } from './tools/index.js';
-import { fetchSchema } from './utils/fetch-schema.js';
-import { toMpcTools } from './utils/to-mpc-tools.js';
+} from "@modelcontextprotocol/sdk/types.js";
+import { createConfig } from "./config.js";
+import { authenticateDirectus, createDirectus } from "./directus.js";
+import { getAvailablePrompts, handleGetPrompt } from "./prompts/handlers.js";
+import { fetchPrompts } from "./prompts/index.js";
+import { getTools } from "./tools/index.js";
+import { fetchSchema } from "./utils/fetch-schema.js";
+import { toMpcTools } from "./utils/to-mpc-tools.js";
 
 async function main() {
 	const config = createConfig();
@@ -26,8 +26,8 @@ async function main() {
 
 	const server = new Server(
 		{
-			name: 'Directus MCP Server',
-			version: '0.0.1',
+			name: "Directus MCP Server",
+			version: "0.0.1",
 		},
 		{
 			capabilities: {
@@ -35,7 +35,7 @@ async function main() {
 				resources: {},
 				prompts: {},
 			},
-		},
+		}
 	);
 
 	// Manage prompts
@@ -50,12 +50,7 @@ async function main() {
 		const promptName = request.params.name;
 		const args = request.params.arguments || {};
 
-		return await handleGetPrompt(
-			directus,
-			config,
-			promptName,
-			args,
-		);
+		return await handleGetPrompt(directus, config, promptName, args);
 	});
 
 	// Manage tool requests
@@ -75,24 +70,26 @@ async function main() {
 				// Proceed with execution if permission check passes
 				const { inputSchema, handler } = tool;
 				const args = inputSchema.parse(request.params.arguments);
-				return await handler(directus, args, { schema, baseUrl: config.DIRECTUS_URL });
-			}
-			catch (error) {
-				console.error('Error executing tool:', error);
+				return await handler(directus, args, {
+					schema,
+					baseUrl: config.DIRECTUS_URL,
+				});
+			} catch (error) {
+				console.error("Error executing tool:", error);
 				const errorMessage =
 					error instanceof Error ? error.message : JSON.stringify(error);
 
 				return {
 					content: [
 						{
-							type: 'text',
+							type: "text",
 							text: errorMessage,
 						},
 					],
 					isError: true,
 				};
 			}
-		},
+		}
 	);
 
 	// Return the pre-filtered list for listing purposes
@@ -107,8 +104,7 @@ async function main() {
 
 try {
 	await main();
-}
-catch (error) {
-	console.error('Fatal error in main():', error);
+} catch (error) {
+	console.error("Fatal error in main():", error);
 	process.exit(1);
 }

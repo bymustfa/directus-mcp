@@ -1,32 +1,30 @@
-import type { Config } from '../config.js';
-import type { ToolDefinition } from '../types/tool.js';
-import { readCommentsTool, upsertCommentTool } from './comments.js';
+import type { Config } from "../config.js";
+import type { ToolDefinition } from "../types/tool.js";
+import { readCommentsTool, upsertCommentTool } from "./comments.js";
 import {
 	createFieldTool,
 	readFieldsTool,
 	readFieldTool,
 	updateFieldTool,
-} from './fields.js';
+} from "./fields.js";
 import {
 	importFileTool,
 	readFilesTool,
 	readFoldersTool,
 	updateFilesTool,
-} from './files.js';
-import {
-	readFlowsTool,
-	triggerFlowTool,
-} from './flows.js';
+} from "./files.js";
+import { readFlowsTool, triggerFlowTool } from "./flows.js";
 import {
 	createItemTool,
 	deleteItemTool,
 	readItemsTool,
 	updateItemTool,
-} from './items.js';
-import { markdownTool } from './markdown.js';
-import { createSystemPrompt } from './prompts.js';
-import schemaTool from './schema.js';
-import { readUsersTool, usersMeTool } from './users.js';
+} from "./items.js";
+import { markdownTool } from "./markdown.js";
+import { createSystemPrompt } from "./prompts.js";
+import schemaTool from "./schema.js";
+import { readUsersTool, usersMeTool } from "./users.js";
+import { createCollectionTool, updateCollectionTool } from "./collections.js";
 
 export const getTools = (config: Config) => {
 	const toolList: ToolDefinition[] = [
@@ -35,6 +33,9 @@ export const getTools = (config: Config) => {
 		readUsersTool,
 		// Schema
 		schemaTool,
+		// Collections
+		createCollectionTool,
+		updateCollectionTool,
 		// Items
 		readItemsTool,
 		createItemTool,
@@ -61,13 +62,13 @@ export const getTools = (config: Config) => {
 	];
 
 	// If system propmt is enabled and exists, add the system prompt tool
-	if (config.MCP_SYSTEM_PROMPT_ENABLED === 'true' && config.MCP_SYSTEM_PROMPT) {
+	if (config.MCP_SYSTEM_PROMPT_ENABLED === "true" && config.MCP_SYSTEM_PROMPT) {
 		toolList.push(createSystemPrompt(config));
 	}
 
 	// Filter the list of available tools based on cof
 	const availableTools = toolList.filter(
-		(tool) => !config.DISABLE_TOOLS.includes(tool.name),
+		(tool) => !config.DISABLE_TOOLS.includes(tool.name)
 	);
 
 	return availableTools;

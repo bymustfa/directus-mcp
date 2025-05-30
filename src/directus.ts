@@ -2,14 +2,14 @@ import type {
 	AuthenticationClient,
 	DirectusClient,
 	RestClient,
-} from '@directus/sdk';
-import type { Config } from './config.js';
-import type { Schema } from './types/schema.js';
+} from "@directus/sdk";
+import type { Config } from "./config.js";
+import type { Schema } from "./types/schema.js";
 import {
 	authentication,
 	createDirectus as createSdk,
 	rest,
-} from '@directus/sdk';
+} from "@directus/sdk";
 
 export type Directus = DirectusClient<Schema> &
 	RestClient<Schema> &
@@ -30,7 +30,7 @@ export const createDirectus = (config: Config) =>
  */
 export async function authenticateDirectus(directus: Directus, config: Config) {
 	if (!directus || !config) {
-		throw new Error('Directus or config is not defined');
+		throw new Error("Directus or config is not defined");
 	}
 
 	// Token-based authentication
@@ -44,22 +44,21 @@ export async function authenticateDirectus(directus: Directus, config: Config) {
 		try {
 			await directus.login(
 				config.DIRECTUS_USER_EMAIL,
-				config.DIRECTUS_USER_PASSWORD,
+				config.DIRECTUS_USER_PASSWORD
 			);
 
 			return;
-		}
-		catch (error) {
+		} catch (error) {
 			const errorMessage =
 				error instanceof Error ? error.message : String(error);
 			throw new Error(
-				`Failed to authenticate with credentials: ${errorMessage}`,
+				`Failed to authenticate with credentials: ${errorMessage}`
 			);
 		}
 	}
 
 	// No valid authentication method
 	throw new Error(
-		'No valid authentication method provided (requires either DIRECTUS_TOKEN or both DIRECTUS_USER_EMAIL and DIRECTUS_USER_PASSWORD)',
+		"No valid authentication method provided (requires either DIRECTUS_TOKEN or both DIRECTUS_USER_EMAIL and DIRECTUS_USER_PASSWORD)"
 	);
 }
